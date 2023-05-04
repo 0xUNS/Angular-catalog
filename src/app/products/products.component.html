@@ -1,0 +1,48 @@
+
+<div class="container">
+  <ng-template #errors>
+    <div class="text-danger"> ERROR : {{errorMessage}} </div>
+  </ng-template>
+  <div class="card mt-3">
+    <div class="card-header">Products List</div>
+    <div class="card-body">
+      <form [formGroup]="searchFormGroup" (ngSubmit)="handelSearchProducts()" class="col-4">
+        <div class="input-group">
+          <input type="search" class="form-control" formControlName="keyword">
+          <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+        </div>
+      </form>
+      <table class="table" *ngIf="products else errors">
+        <thead><tr><th>#</th><th>Name</th><th>Price</th><th>Promotion</th><th></th></tr></thead>
+        <tbody>
+        <tr *ngFor="let p of products">
+          <td>{{p.id}}</td>
+          <td>{{p.name}}</td>
+          <td>{{p.price}}</td>
+          <td>
+            <i *ngIf="p.promotion == true" class="bi bi-bag-check-fill text-success"></i>
+            <i *ngIf="p.promotion == false" class="bi bi-bag-x-fill text-danger"></i>
+          </td>
+          <td>
+            <button (click)="handelSetPromotion(p)" [ngClass]="p.promotion==true?'btn btn-success':'btn btn-danger'">
+              <span *ngIf="p.promotion == true">Promo On</span>
+              <span *ngIf="p.promotion == false">Promo Off</span>
+            </button>
+          </td>
+          <td>
+            <button (click)="handleDeleteProduct(p)"
+              class="btn btn-danger rounded-pill">
+              <i class="bi bi-trash"> Delete </i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <ul class="pagination pagination-sm">
+        <li *ngFor="let item of [].constructor(this.totalPages); let i = index" class="page-item">
+          <a (click)="goToPage(i)" [ngClass]="i==currentPage?'page-link active':'page-link'">{{i}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
