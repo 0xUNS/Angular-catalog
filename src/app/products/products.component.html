@@ -1,4 +1,3 @@
-
 <div class="container">
   <ng-template #errors>
     <div class="text-danger"> ERROR : {{errorMessage}} </div>
@@ -6,14 +5,23 @@
   <div class="card mt-3">
     <div class="card-header">Products List</div>
     <div class="card-body">
-      <form [formGroup]="searchFormGroup" (ngSubmit)="handelSearchProducts()" class="col-4">
-        <div class="input-group">
-          <input type="search" class="form-control" formControlName="keyword">
-          <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+      <div class="m-2 pb-3 border-bottom border-secondary row">
+        <div class="col-6">
+          <form [formGroup]="searchFormGroup" (ngSubmit)="handelSearchProducts()">
+            <div class="input-group">
+              <input type="search" class="form-control" formControlName="keyword">
+              <button class="btn btn-primary"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
         </div>
-      </form>
+        <div class="col-4">
+          <button *ngIf="this.authService.hasRole('ADMIN')" (click)="handelNewProduct()" class="btn btn-outline-secondary">
+            <i class="bi bi-plus-circle"> New Product </i>
+          </button>
+        </div>
+      </div>
       <table class="table" *ngIf="products else errors">
-        <thead><tr><th>#</th><th>Name</th><th>Price</th><th>Promotion</th><th></th></tr></thead>
+        <thead><tr><th>#</th><th>Name</th><th>Price</th><th>Promotion</th></tr></thead>
         <tbody>
         <tr *ngFor="let p of products">
           <td>{{p.id}}</td>
@@ -23,17 +31,21 @@
             <i *ngIf="p.promotion == true" class="bi bi-bag-check-fill text-success"></i>
             <i *ngIf="p.promotion == false" class="bi bi-bag-x-fill text-danger"></i>
           </td>
-          <td>
-            <button (click)="handelSetPromotion(p)" [ngClass]="p.promotion==true?'btn btn-success':'btn btn-danger'">
+          <td *ngIf="authService.hasRole('ADMIN')">
+            <button (click)="handelSetPromotion(p)" [ngClass]="p.promotion==true?'btn btn-sm btn-success':'btn btn-sm btn-danger'">
               <span *ngIf="p.promotion == true">Promo On</span>
               <span *ngIf="p.promotion == false">Promo Off</span>
             </button>
           </td>
-          <td>
-            <button (click)="handleDeleteProduct(p)"
-              class="btn btn-danger rounded-pill">
-              <i class="bi bi-trash"> Delete </i>
-            </button>
+          <td *ngIf="authService.hasRole('ADMIN')">
+            <div class="btn-group" role="button">
+              <button (click)="handleEditProduct(p)" class="btn btn-sm btn-warning rounded-pill rounded-end">
+                <i class="bi bi-pencil-square"> Edit </i>
+              </button>
+              <button (click)="handleDeleteProduct(p)" class="btn btn-sm btn-danger rounded-pill rounded-start">
+                <i class="bi bi-trash"> Delete </i>
+              </button>
+            </div>
           </td>
         </tr>
         </tbody>
